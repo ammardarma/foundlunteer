@@ -9,6 +9,11 @@ double screenArea(BuildContext context) =>
     MediaQuery.of(context).size.width * MediaQuery.of(context).size.height;
 
 //textStyle
+TextStyle paraghraf = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w400,
+    fontSize: 14.sp,
+    letterSpacing: -0.06);
 
 TextStyle textLink = TextStyle(
     color: blue,
@@ -16,22 +21,16 @@ TextStyle textLink = TextStyle(
     fontSize: 12.sp,
     letterSpacing: -0.06);
 
-TextStyle paraghraf = TextStyle(
-    color: blackText,
-    fontWeight: FontWeight.w400,
-    fontSize: 14.sp,
+TextStyle textButton = TextStyle(
+    color: black,
+    fontWeight: FontWeight.w600,
+    fontSize: 16.sp,
     letterSpacing: -0.06);
 
 TextStyle title = TextStyle(
     color: blackTitle,
     fontWeight: FontWeight.w600,
     fontSize: 20.sp,
-    letterSpacing: -0.06);
-
-TextStyle textButton = TextStyle(
-    color: black,
-    fontWeight: FontWeight.w600,
-    fontSize: 16.sp,
     letterSpacing: -0.06);
 
 List<BoxShadow>? shadowButton = [

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:foundlunteer/presentation/login.dart';
-import 'package:foundlunteer/presentation/register.dart';
+import 'package:foundlunteer/presentation/opening/login.dart';
+import 'package:foundlunteer/presentation/opening/register.dart';
 
-import '../constant/color.dart';
-import '../constant/widget_lib.dart';
+import '../../constant/color.dart';
+import '../../constant/widget_lib.dart';
 
 class PreRegister extends StatefulWidget {
   const PreRegister({super.key});

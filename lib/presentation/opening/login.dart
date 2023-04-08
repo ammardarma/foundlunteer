@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:foundlunteer/presentation/pre_register.dart';
+import 'package:foundlunteer/presentation/home/home_list.dart';
+import 'package:foundlunteer/presentation/opening/pre_register.dart';
 
-import '../constant/color.dart';
-import '../constant/widget_lib.dart';
+import '../../constant/widget_lib.dart';
+import '../../constant/color.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -99,17 +100,17 @@ class _LoginState extends State<Login> {
                             : Icons.visibility_off),
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.r),
+                        borderRadius: BorderRadius.circular(10.r),
                         borderSide: BorderSide(
                             color: white, style: BorderStyle.solid, width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.r),
+                        borderRadius: BorderRadius.circular(10.r),
                         borderSide: BorderSide(
                             color: white, style: BorderStyle.solid, width: 2),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.r),
+                        borderRadius: BorderRadius.circular(10.r),
                         borderSide: BorderSide(
                             color: white, style: BorderStyle.solid, width: 1.2),
                       ),
@@ -145,7 +146,12 @@ class _LoginState extends State<Login> {
                     boxShadow: shadowButton,
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => HomeList()));
+                    },
                     style: ElevatedButton.styleFrom(
                         primary: Colors.transparent,
                         onSurface: Colors.transparent,

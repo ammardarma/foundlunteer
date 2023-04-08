@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:foundlunteer/presentation/splashscreen.dart';
+import 'package:foundlunteer/presentation/opening/splashscreen.dart';
 
 import 'constant/color.dart';
 
@@ -32,4 +32,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foundlunteer/constant/color.dart';
 import 'package:foundlunteer/constant/widget_lib.dart';
-import 'package:foundlunteer/presentation/introduction.dart';
+import 'package:foundlunteer/presentation/opening/introduction.dart';
+
+import 'introduction.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -11,7 +13,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: Duration(milliseconds: 800),
     vsync: this,
@@ -56,38 +59,35 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           children: [
             Align(
                 alignment: Alignment.bottomCenter,
-                child:Container(
-                  height:100,
-                  width:screenWidth(context),
-                  child: FadeTransition(opacity: _animation,
-                    child: Text(
-                      'VOLUNTEER IS A WORK OF HEART',
-                      style: TextStyle(
-                          fontFamily: 'Fredoka One',
-                          color: black,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600
-                      ),
-                      textAlign: TextAlign.center,
-                    )
-                  ),
-                )
-            ),
+                child: Container(
+                  height: 100,
+                  width: screenWidth(context),
+                  child: FadeTransition(
+                      opacity: _animation,
+                      child: Text(
+                        'VOLUNTEER IS A WORK OF HEART',
+                        style: TextStyle(
+                            fontFamily: 'Fredoka One',
+                            color: black,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.center,
+                      )),
+                )),
             Container(
-                alignment: Alignment.center,
-                child:
-                FadeTransition(opacity: _animation,
-                  child: Image.asset(
-                    'assets/logo.png',
-                    height: 355.h,
-                    width: 390.w,
-                  ),
+              alignment: Alignment.center,
+              child: FadeTransition(
+                opacity: _animation,
+                child: Image.asset(
+                  'assets/logo.png',
+                  height: 355.h,
+                  width: 390.w,
                 ),
-                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
