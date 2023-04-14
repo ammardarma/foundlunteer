@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foundlunteer/constant/color.dart';
 import 'package:foundlunteer/constant/widget_lib.dart';
+import 'package:foundlunteer/presentation/home/home_detail.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeList extends StatefulWidget {
@@ -15,138 +17,98 @@ class _HomeListState extends State<HomeList> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        top: false,
-        bottom: false,
-        child: Scaffold(
-          bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: blackTitle,
-              iconSize: 25,
-              selectedLabelStyle: textLink.copyWith(color: blackTitle),
-              unselectedItemColor: blackHintText,
-              unselectedLabelStyle: textLink.copyWith(color: blackHintText),
-              showUnselectedLabels: true,
-              items: [
-                BottomNavigationBarItem(
-                  activeIcon: Icon(
-                    Icons.home,
-                  ),
-                  icon: Icon(Icons.home_outlined),
-                  label: "Home",
+      top: false,
+      bottom: false,
+      child: SlidingUpPanel(
+        isDraggable: false,
+        maxHeight: screenHeight(context) * 0.63,
+        minHeight: screenHeight(context) * 0.63,
+        panelBuilder: (ScrollController sc) => _scrollingList(sc),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r), topRight: Radius.circular(20.r)),
+        body: Container(
+            padding: EdgeInsets.all(14),
+            width: screenWidth(context),
+            height: screenHeight(context),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [yellow, yellowDope],
+                    begin: Alignment.topLeft,
+                    end: Alignment.centerRight)),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 38.h,
                 ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(
-                    Icons.home_work_outlined,
-                  ),
-                  icon: Icon(Icons.home_work_outlined),
-                  label: "Organization",
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(
-                    Icons.send,
-                  ),
-                  icon: Icon(Icons.send),
-                  label: "Apply",
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(
-                    Icons.person,
-                  ),
-                  icon: Icon(Icons.person),
-                  label: "Profile",
-                ),
-              ]),
-          body: SlidingUpPanel(
-            isDraggable: false,
-            maxHeight: screenHeight(context) * 0.63,
-            minHeight: screenHeight(context) * 0.63,
-            panelBuilder: (ScrollController sc) => _scrollingList(sc),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.r),
-                topRight: Radius.circular(20.r)),
-            body: Container(
-                padding: EdgeInsets.all(14),
-                width: screenWidth(context),
-                height: screenHeight(context),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [yellow, yellowDope],
-                        begin: Alignment.topLeft,
-                        end: Alignment.centerRight)),
-                child: Column(
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 38.h,
+                    Icon(
+                      Icons.mail_outlined,
+                      size: 20,
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
+                    SizedBox(
+                      width: 2.w,
+                    ),
+                    SizedBox(
+                      width: 180.w,
+                      height: 20.h,
+                      child: Text(
+                        "ammarcuy2@gmail.com",
+                        style: title.copyWith(
+                            fontSize: 12.sp, fontWeight: FontWeight.w600),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 28.h,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.mail_outlined,
-                          size: 20,
-                        ),
                         SizedBox(
-                          width: 2.w,
-                        ),
-                        SizedBox(
-                          width: 180.w,
-                          height: 20.h,
+                          width: 60.w,
+                          height: 30.h,
                           child: Text(
-                            "ammarcuy2@gmail.com",
+                            "Hallo,",
                             style: title.copyWith(
-                                fontSize: 12.sp, fontWeight: FontWeight.w500),
+                                fontSize: 21.sp, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 186.w,
+                          child: Text(
+                            "Ammar Ridwan Darma",
+                            style: title.copyWith(
+                                fontSize: 18.sp, fontWeight: FontWeight.w500),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         )
                       ],
                     ),
+                    Spacer(),
+                    CircleAvatar(
+                        radius: 42,
+                        backgroundColor: yellow,
+                        backgroundImage: AssetImage(
+                          "assets/icons/profile_active.png",
+                        )),
                     SizedBox(
-                      height: 28.h,
+                      height: 25.h,
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 60.w,
-                              height: 30.h,
-                              child: Text(
-                                "Hallo,",
-                                style: title.copyWith(
-                                    fontSize: 21.sp,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 186.w,
-                              child: Text(
-                                "Ammar Ridwan Darma",
-                                style: title.copyWith(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          ],
-                        ),
-                        Spacer(),
-                        CircleAvatar(
-                          radius: 42,
-                          backgroundImage: NetworkImage(
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS81t_83dXLKRcS0poW3eqEehM7hZO-57I2-bKp4XuzwfQ5Asd4Zyfq_yVJwgftfQOS2Zc&usqp=CAU"),
-                        ),
-                        SizedBox(
-                          height: 25.h,
-                        ),
-                      ],
-                    )
                   ],
-                )),
-          ),
-        ));
+                )
+              ],
+            )),
+      ),
+    );
   }
 
   Widget _scrollingList(ScrollController sc) {
@@ -215,27 +177,137 @@ class _HomeListState extends State<HomeList> {
           height: 30.h,
           child: Text(
             "Daftar Pekerjaan",
-            style: title.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700),
+            style: titleLarge,
             textAlign: TextAlign.start,
           ),
         ),
         SizedBox(
-          height: 10.h,
+          height: 2.h,
         ),
         Flexible(
           child: ListView.builder(
+            padding: EdgeInsets.all(0.0),
             shrinkWrap: true,
             controller: sc,
-            itemCount: 50,
+            itemCount: 10,
             itemBuilder: (BuildContext context, int i) {
-              return Container(
-                padding: const EdgeInsets.all(12.0),
-                child: Text("$i"),
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              HomeDetail(index: i)));
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 12.h, horizontal: 0.h),
+                  child: listData(),
+                ),
               );
             },
           ),
         ),
       ]),
+    );
+  }
+
+  Widget listData() {
+    return Container(
+      width: 362.w,
+      height: 138.h,
+      padding: EdgeInsets.only(top: 15.h, right: 12.w, left: 12.w, bottom: 8.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.r),
+        color: white,
+        boxShadow: shadowButton,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 79.w,
+                height: 68.h,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    image: DecorationImage(
+                        image: AssetImage('assets/organisasi.png'),
+                        fit: BoxFit.cover)),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              SizedBox(
+                width: 75.w,
+                child: Text(
+                  'Rumah Singgah',
+                  overflow: TextOverflow.ellipsis,
+                  style: titleMini,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 14.w,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  'Coordinator Konser',
+                  overflow: TextOverflow.ellipsis,
+                  style: titleLarge,
+                  textAlign: TextAlign.start,
+                  maxLines: 1,
+                ),
+                SizedBox(
+                  height: 6.h,
+                ),
+                Text(
+                  'Membantu berjalannya konser akbar yang akan dimeriahkan oleh berbagai macam cara agar menjadi sebuah hal yang menarik',
+                  overflow: TextOverflow.ellipsis,
+                  style: normalText,
+                  textAlign: TextAlign.start,
+                  maxLines: 2,
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Container(
+                  width: 58.w,
+                  height: 24.h,
+                  decoration: BoxDecoration(
+                      color: green10, borderRadius: BorderRadius.circular(5.r)),
+                  child: Center(
+                    child: Text(
+                      'OPEN',
+                      style: textLink.copyWith(
+                          color: green, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 6.h,
+                ),
+                Text(
+                  "Lihat & Daftar > ",
+                  style: title.copyWith(fontSize: 12.sp),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

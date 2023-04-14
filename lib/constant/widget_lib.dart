@@ -9,10 +9,66 @@ double screenArea(BuildContext context) =>
     MediaQuery.of(context).size.width * MediaQuery.of(context).size.height;
 
 //textStyle
-TextStyle paraghraf = TextStyle(
+
+TextStyle normalText = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w400,
+    fontSize: 12.sp,
+    letterSpacing: -0.06,
+    height: 1.2.h);
+
+TextStyle normalTextBold = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w600,
+    fontSize: 12.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextMedium = TextStyle(
     color: blackText,
     fontWeight: FontWeight.w400,
     fontSize: 14.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextMediumBold = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w600,
+    fontSize: 14.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextLarge = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w400,
+    fontSize: 16.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextLargeBold = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w600,
+    fontSize: 16.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextXLarge = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w400,
+    fontSize: 18.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextXLargeBold = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w600,
+    fontSize: 18.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextXXLarge = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w400,
+    fontSize: 20.sp,
+    letterSpacing: -0.06);
+
+TextStyle normalTextXXLargeBold = TextStyle(
+    color: blackText,
+    fontWeight: FontWeight.w600,
+    fontSize: 20.sp,
     letterSpacing: -0.06);
 
 TextStyle textLink = TextStyle(
@@ -27,7 +83,31 @@ TextStyle textButton = TextStyle(
     fontSize: 16.sp,
     letterSpacing: -0.06);
 
+TextStyle titleMini = TextStyle(
+    color: blackTitle,
+    fontWeight: FontWeight.w600,
+    fontSize: 10.sp,
+    letterSpacing: -0.06);
+
 TextStyle title = TextStyle(
+    color: blackTitle,
+    fontWeight: FontWeight.w600,
+    fontSize: 12.sp,
+    letterSpacing: -0.06);
+
+TextStyle titleMedium = TextStyle(
+    color: blackTitle,
+    fontWeight: FontWeight.w600,
+    fontSize: 14.sp,
+    letterSpacing: -0.06);
+
+TextStyle titleLarge = TextStyle(
+    color: blackTitle,
+    fontWeight: FontWeight.w600,
+    fontSize: 16.sp,
+    letterSpacing: -0.06);
+
+TextStyle titleXLarge = TextStyle(
     color: blackTitle,
     fontWeight: FontWeight.w600,
     fontSize: 20.sp,

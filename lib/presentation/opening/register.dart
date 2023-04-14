@@ -40,7 +40,7 @@ class _RegisterState extends State<Register> {
                   width: 320.w,
                   child: Text(
                     'Buat Akun!',
-                    style: title,
+                    style: titleXLarge,
                     maxLines: 3,
                     textAlign: TextAlign.center,
                   ),

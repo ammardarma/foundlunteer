@@ -39,7 +39,7 @@ class _PreRegisterState extends State<PreRegister> {
                 width: 320.w,
                 child: Text(
                   'Buat Akun!',
-                  style: title,
+                  style: titleXLarge,
                   maxLines: 3,
                   textAlign: TextAlign.center,
                 ),
@@ -51,7 +51,7 @@ class _PreRegisterState extends State<PreRegister> {
                 width: 320.w,
                 child: Text(
                   "Siapakah kamu?",
-                  style: paraghraf,
+                  style: normalTextMedium,
                   textAlign: TextAlign.start,
                 ),
               ),
@@ -71,24 +71,18 @@ class _PreRegisterState extends State<PreRegister> {
                     child: Row(
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                              color: white,
-                              borderRadius: BorderRadius.circular(10.r),
-                              boxShadow: shadowTextFormField),
-                          width: 48.w,
-                          height: 40.h,
-                          child: Icon(
-                            Icons.person_outline_rounded,
-                            size: 40,
-                            color: blackText,
-                          ),
-                        ),
+                            decoration: BoxDecoration(
+                                color: white,
+                                borderRadius: BorderRadius.circular(10.r),
+                                boxShadow: shadowTextFormField),
+                            width: 48.w,
+                            height: 40.h,
+                            child: ImageIcon(
+                                AssetImage('assets/icons/profile.png'))),
                         SizedBox(
                           width: 10.w,
                         ),
-                        Text('Individu',
-                            style: paraghraf.copyWith(
-                                fontWeight: FontWeight.w600)),
+                        Text('Individu', style: normalTextMediumBold),
                       ],
                     ),
                   ),
@@ -102,24 +96,19 @@ class _PreRegisterState extends State<PreRegister> {
                     child: Row(
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                              color: white,
-                              borderRadius: BorderRadius.circular(10.r),
-                              boxShadow: shadowTextFormField),
-                          width: 48.w,
-                          height: 40.h,
-                          child: Icon(
-                            Icons.home_work_outlined,
-                            size: 40,
-                            color: blackText,
-                          ),
-                        ),
+                            decoration: BoxDecoration(
+                                color: white,
+                                borderRadius: BorderRadius.circular(10.r),
+                                boxShadow: shadowTextFormField),
+                            width: 48.w,
+                            height: 40.h,
+                            child: ImageIcon(
+                              AssetImage('assets/icons/organisasi.png'),
+                            )),
                         SizedBox(
                           width: 10.w,
                         ),
-                        Text('Organisasi',
-                            style:
-                                paraghraf.copyWith(fontWeight: FontWeight.w600))
+                        Text('Organisasi', style: normalTextMediumBold)
                       ],
                     ),
                   ),

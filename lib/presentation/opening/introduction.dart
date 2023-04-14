@@ -39,7 +39,7 @@ class _IntroductionState extends State<Introduction> {
                 height: 69.h,
                 child: Text(
                   'Foundlunteer mempertemukan antara organisasi yang membutuhkan sumber daya manusia dan manusia-manusia baik',
-                  style: paraghraf.copyWith(height: 1.2.h),
+                  style: normalTextMedium,
                   maxLines: 3,
                   textAlign: TextAlign.center,
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foundlunteer/presentation/home/home_list.dart';
+import 'package:foundlunteer/presentation/mainPage.dart';
 import 'package:foundlunteer/presentation/opening/pre_register.dart';
 
 import '../../constant/widget_lib.dart';
@@ -40,16 +41,19 @@ class _LoginState extends State<Login> {
                 width: 320.w,
                 child: Text(
                   'Hallo!',
-                  style: title,
+                  style: titleXLarge,
                   maxLines: 3,
                   textAlign: TextAlign.start,
                 ),
               ),
               SizedBox(
+                height: 4.h,
+              ),
+              SizedBox(
                 width: 320.w,
                 child: Text(
                   'Selamat datang kembali, silahkan masuk dengan akun anda',
-                  style: paraghraf.copyWith(fontSize: 16.sp, height: 1.2.h),
+                  style: normalTextMedium,
                   textAlign: TextAlign.start,
                 ),
               ),
@@ -150,7 +154,7 @@ class _LoginState extends State<Login> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) => HomeList()));
+                              builder: (BuildContext context) => MainPage()));
                     },
                     style: ElevatedButton.styleFrom(
                         primary: Colors.transparent,

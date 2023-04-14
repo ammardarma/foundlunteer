@@ -70,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
                             fontFamily: 'Fredoka One',
                             color: black,
                             fontSize: 12.sp,
-                            fontWeight: FontWeight.w600),
+                            fontWeight: FontWeight.w900),
                         textAlign: TextAlign.center,
                       )),
                 )),
