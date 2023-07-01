@@ -1,13 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foundlunteer/constant/color.dart';
 import 'package:foundlunteer/constant/widget_lib.dart';
+import 'package:foundlunteer/data/jobsImpl.dart';
+import 'package:foundlunteer/data/openingImpl.dart';
+import 'package:foundlunteer/data/usersImpl.dart';
+import 'package:foundlunteer/domain/resultState.dart';
 import 'package:foundlunteer/presentation/home/home_detail.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../../domain/jobHome.dart';
+
 class HomeList extends StatefulWidget {
-  const HomeList({super.key});
+  final String? token;
+  const HomeList({super.key, this.token});
 
   @override
   State<HomeList> createState() => _HomeListState();
@@ -15,103 +24,153 @@ class HomeList extends StatefulWidget {
 
 class _HomeListState extends State<HomeList> {
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      bottom: false,
-      child: SlidingUpPanel(
-        isDraggable: false,
-        maxHeight: screenHeight(context) * 0.63,
-        minHeight: screenHeight(context) * 0.63,
-        panelBuilder: (ScrollController sc) => _scrollingList(sc),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r), topRight: Radius.circular(20.r)),
-        body: Container(
-            padding: EdgeInsets.all(14),
-            width: screenWidth(context),
-            height: screenHeight(context),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [yellow, yellowDope],
-                    begin: Alignment.topLeft,
-                    end: Alignment.centerRight)),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 38.h,
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.mail_outlined,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 2.w,
-                    ),
-                    SizedBox(
-                      width: 180.w,
-                      height: 20.h,
-                      child: Text(
-                        "ammarcuy2@gmail.com",
-                        style: title.copyWith(
-                            fontSize: 12.sp, fontWeight: FontWeight.w600),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 28.h,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 60.w,
-                          height: 30.h,
-                          child: Text(
-                            "Hallo,",
-                            style: title.copyWith(
-                                fontSize: 21.sp, fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 186.w,
-                          child: Text(
-                            "Ammar Ridwan Darma",
-                            style: title.copyWith(
-                                fontSize: 18.sp, fontWeight: FontWeight.w500),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                    Spacer(),
-                    CircleAvatar(
-                        radius: 42,
-                        backgroundColor: yellow,
-                        backgroundImage: AssetImage(
-                          "assets/icons/profile_active.png",
-                        )),
-                    SizedBox(
-                      height: 25.h,
-                    ),
-                  ],
-                )
-              ],
-            )),
-      ),
-    );
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
-  Widget _scrollingList(ScrollController sc) {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<GetJobProvider>(builder: (context, jobs, _) {
+      var users = context.read<GetUserProvider>();
+      if (jobs.stateJobs == ResultState.loading) {
+        return Center(child: CircularProgressIndicator());
+      } else if (jobs.stateJobs == ResultState.failed) {
+        return Center(child: Text('Gagal mengambil data'));
+      } else if (jobs.stateJobs == ResultState.serverError) {
+        return Center(child: Text('Server sedang bermasalah'));
+      } else {
+        if (users.state == ResultState.loading) {
+          return Center(child: CircularProgressIndicator());
+        } else if (users.state == ResultState.failed) {
+          return Center(child: Text('Gagal mengambil data'));
+        } else if (users.state == ResultState.serverError) {
+          return Center(child: Text('Server sedang bermasalah'));
+        }
+        return SafeArea(
+          top: false,
+          bottom: false,
+          child: SlidingUpPanel(
+            isDraggable: false,
+            maxHeight: screenHeight(context) * 0.6,
+            minHeight: screenHeight(context) * 0.6,
+            panelBuilder: (ScrollController sc) => _scrollingList(sc, jobs),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r)),
+            body: Container(
+                padding: EdgeInsets.all(14),
+                width: screenWidth(context) * 0.4,
+                height: screenHeight(context) * 0.4,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [yellow, yellowDope],
+                        begin: Alignment.topLeft,
+                        end: Alignment.centerRight)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 38.h,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.mail_outlined,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 2.w,
+                        ),
+                        SizedBox(
+                          width: 180.w,
+                          height: 20.h,
+                          child: Text(
+                            users.users.user?.email ?? "",
+                            style: title.copyWith(
+                                fontSize: 12.sp, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: 100.w,
+                      height: 24.h,
+                      decoration: BoxDecoration(
+                          color: (users.users.user?.role == "INDIVIDUAL")
+                              ? green10
+                              : red10,
+                          borderRadius: BorderRadius.circular(5.r)),
+                      child: Center(
+                        child: Text(
+                          users.users.user?.role ?? "",
+                          style: textLink.copyWith(
+                              color: (users.users.user?.role == "INDIVIDUAL")
+                                  ? green
+                                  : red,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4.h,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 60.w,
+                              height: 30.h,
+                              child: Text(
+                                "Hallo,",
+                                style: title.copyWith(
+                                    fontSize: 21.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 186.w,
+                              child: Text(
+                                users.users.user?.name.toString() ?? "",
+                                style: title.copyWith(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w700),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8.h,
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        CircleAvatar(
+                            radius: 52,
+                            backgroundColor: yellow,
+                            backgroundImage: AssetImage(
+                              "assets/foto_pribadi.jpeg",
+                            )),
+                        SizedBox(
+                          height: 25.h,
+                        ),
+                      ],
+                    )
+                  ],
+                )),
+          ),
+        );
+      }
+    });
+  }
+
+  Widget _scrollingList(ScrollController sc, GetJobProvider jobs) {
     return Container(
       padding: EdgeInsets.only(top: 5.h, right: 14.h, left: 14.h),
       decoration: BoxDecoration(
@@ -189,20 +248,23 @@ class _HomeListState extends State<HomeList> {
             padding: EdgeInsets.all(0.0),
             shrinkWrap: true,
             controller: sc,
-            itemCount: 10,
+            itemCount: jobs.jobs.jobs?.length ?? 0,
             itemBuilder: (BuildContext context, int i) {
+              var job = jobs.jobs.jobs?[i];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              HomeDetail(index: i)));
+                          builder: (BuildContext context) => HomeDetail(
+                                index: i,
+                                job: job,
+                              )));
                 },
                 child: Container(
                   padding:
                       EdgeInsets.symmetric(vertical: 12.h, horizontal: 0.h),
-                  child: listData(),
+                  child: listData(job!),
                 ),
               );
             },
@@ -212,7 +274,7 @@ class _HomeListState extends State<HomeList> {
     );
   }
 
-  Widget listData() {
+  Widget listData(Jobs job) {
     return Container(
       width: 362.w,
       height: 138.h,
@@ -231,21 +293,23 @@ class _HomeListState extends State<HomeList> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                width: 79.w,
-                height: 68.h,
+                width: 97.w,
+                height: 80.h,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.r),
                     image: DecorationImage(
-                        image: AssetImage('assets/organisasi.png'),
+                        image: (job.image == null)
+                            ? AssetImage('assets/organisasi.png')
+                            : NetworkImage(job.image!) as ImageProvider,
                         fit: BoxFit.cover)),
               ),
               SizedBox(
-                height: 10.h,
+                height: 6.h,
               ),
               SizedBox(
                 width: 75.w,
                 child: Text(
-                  'Rumah Singgah',
+                  job.organization?.user?.name ?? "",
                   overflow: TextOverflow.ellipsis,
                   style: titleMini,
                   maxLines: 2,
@@ -264,7 +328,7 @@ class _HomeListState extends State<HomeList> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Text(
-                  'Coordinator Konser',
+                  job.title ?? "",
                   overflow: TextOverflow.ellipsis,
                   style: titleLarge,
                   textAlign: TextAlign.start,
@@ -274,7 +338,7 @@ class _HomeListState extends State<HomeList> {
                   height: 6.h,
                 ),
                 Text(
-                  'Membantu berjalannya konser akbar yang akan dimeriahkan oleh berbagai macam cara agar menjadi sebuah hal yang menarik',
+                  job.description ?? "",
                   overflow: TextOverflow.ellipsis,
                   style: normalText,
                   textAlign: TextAlign.start,
@@ -283,18 +347,51 @@ class _HomeListState extends State<HomeList> {
                 SizedBox(
                   height: 10.h,
                 ),
-                Container(
-                  width: 58.w,
-                  height: 24.h,
-                  decoration: BoxDecoration(
-                      color: green10, borderRadius: BorderRadius.circular(5.r)),
-                  child: Center(
-                    child: Text(
-                      'OPEN',
-                      style: textLink.copyWith(
-                          color: green, fontWeight: FontWeight.w700),
+                Row(
+                  children: [
+                    Container(
+                      width: 58.w,
+                      height: 24.h,
+                      decoration: BoxDecoration(
+                          color: (job.jobStatus == "OPEN") ? green10 : red10,
+                          borderRadius: BorderRadius.circular(5.r)),
+                      child: Center(
+                        child: Text(
+                          job.jobStatus ?? "",
+                          style: textLink.copyWith(
+                              color: (job.jobStatus == "OPEN") ? green : red,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 6.w,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6.w),
+                      height: 24.h,
+                      decoration: BoxDecoration(
+                          color: blue10,
+                          borderRadius: BorderRadius.circular(5.r)),
+                      child: Center(
+                        child: Row(children: [
+                          Icon(
+                            Icons.pin_drop_rounded,
+                            color: blue,
+                            size: 14,
+                          ),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Text(
+                            job.location ?? "",
+                            style: textLink.copyWith(
+                                color: blue, fontWeight: FontWeight.w700),
+                          )
+                        ]),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 6.h,

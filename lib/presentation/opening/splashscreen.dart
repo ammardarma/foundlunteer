@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foundlunteer/constant/color.dart';
 import 'package:foundlunteer/constant/widget_lib.dart';
+import 'package:foundlunteer/presentation/mainPage.dart';
 import 'package:foundlunteer/presentation/opening/introduction.dart';
+import 'package:foundlunteer/presentation/opening/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'introduction.dart';
 
@@ -25,9 +28,23 @@ class _SplashScreenState extends State<SplashScreen>
     end: 1.0,
   ).animate(_controller);
 
+  SharedPreferences? prefs;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setPrefs();
+  }
+
+  Future<Null> setPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
   @override
   Widget build(BuildContext context) {
     _controller.forward();
+    print(prefs?.getString('token') ?? "");
     Future.delayed(
         Duration(
           milliseconds: 2500,
@@ -39,7 +56,14 @@ class _SplashScreenState extends State<SplashScreen>
               seconds: 1,
             ),
             pageBuilder: (context, animation, animationTime) {
-              return Introduction();
+              return ((prefs?.getString('token') ?? "") ==
+                      prefs!.getString('token'))
+                  ? MainPage(
+                      token: prefs!.getString('token'),
+                    )
+                  : ((prefs?.getBool('skip') ?? false) == true)
+                      ? Login()
+                      : Introduction();
             },
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {

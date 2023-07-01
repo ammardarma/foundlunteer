@@ -66,7 +66,9 @@ class _PreRegisterState extends State<PreRegister> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) => Register()));
+                              builder: (BuildContext context) => Register(
+                                    role: "individual",
+                                  )));
                     },
                     child: Row(
                       children: [
@@ -91,7 +93,9 @@ class _PreRegisterState extends State<PreRegister> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) => Register()));
+                              builder: (BuildContext context) => Register(
+                                    role: "organization",
+                                  )));
                     },
                     child: Row(
                       children: [

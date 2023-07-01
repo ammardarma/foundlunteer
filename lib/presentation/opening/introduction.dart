@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foundlunteer/constant/color.dart';
 import 'package:foundlunteer/constant/widget_lib.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login.dart';
 
@@ -59,7 +60,10 @@ class _IntroductionState extends State<Introduction> {
                     boxShadow: shadowButton,
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setBool('skip', true);
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
