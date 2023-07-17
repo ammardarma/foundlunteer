@@ -14,9 +14,10 @@ const Color yellowDope = Color(0xFFD7B919);
 
 const Color black = Color(0xFF000000);
 const Color blackText = Color(0xFF4D4D4D);
+const Color blackHintText = Color(0xFF999999);
+
 const Color blackTitle = Color(0xFF272343);
 const Color blackTitle10 = Color(0x1A272343);
-const Color blackHintText = Color(0xFF999999);
 
 const Color blue = Color(0xFF248DDA);
 const Color blue10 = Color(0x1A248DDA);
@@ -29,3 +30,6 @@ const Color red10 = Color(0x1ADB3232);
 
 const Color salmon = Color(0xFFFC7869);
 const Color salmon10 = Color(0x1AFC7869);
+
+const Color gold = Color(0xFF996515);
+const Color gold10 = Color(0x1A996515);

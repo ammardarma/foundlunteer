@@ -17,6 +17,7 @@ class GetJobProvider with ChangeNotifier {
 
   JobHome jobsByFilter = JobHome();
   ResultState stateJobsByFilter = ResultState.empty;
+  ResultState stateJobsByFilterId = ResultState.empty;
 
   JobHome jobsByOrganization = JobHome();
   ResultState stateJobsByOrganization = ResultState.empty;
@@ -31,20 +32,22 @@ class GetJobProvider with ChangeNotifier {
   ResultState stateRegisterJob = ResultState.empty;
   ResultState stateUpdateStatusJob = ResultState.empty;
   ResultState stateUpdateJob = ResultState.empty;
+  ResultState stateUpdateStatusRegistrantJob = ResultState.empty;
+  ResultState stateDeleteJob = ResultState.empty;
 
 // GET ALL JOB (UNTUK ORGANIZATION + INDIVIDUAL)
-  Future<JobHome> getJobs(String? token) async {
+  Future<JobHome> getJobs(String? token, int? page) async {
     stateJobs = ResultState.loading;
     notifyListeners();
     try {
-      final response = await http
-          .get(Uri.parse("${baseUrl}/job/getall"), headers: <String, String>{
-        'Content-Type': 'application/json; charset-UTF-8',
-        'Authorization': 'bearer ${token}'
-      });
+      final response = await http.get(
+          Uri.parse("${baseUrl}/job/getall?limit=100&page=1"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset-UTF-8',
+            'Authorization': 'bearer ${token}'
+          });
       if (response.statusCode == 200) {
         jobs = JobHome.fromJson(json.decode(response.body));
-        print(jobs.jobs?.length);
         stateJobs = ResultState.success;
         notifyListeners();
       } else {
@@ -118,22 +121,28 @@ class GetJobProvider with ChangeNotifier {
     return organizationJobById;
   }
 
-// GET ALL JOB BY FILTER (ORGANIZATION + INDIVIDUAL)
-  Future<JobHome> getJobsByFilter(String? token, String? limit, String? page,
-      String? location, String? id) async {
+  Future<JobHome> getJobsByFilter(
+      {String? token,
+      String? limit = "1000",
+      String? page = "1",
+      String? title = "",
+      String? location = "",
+      String? id = ""}) async {
     stateJobsByFilter = ResultState.loading;
     notifyListeners();
     try {
       final response = await http.get(
           Uri.parse(
-              "${baseUrl}/job/getall?limit=${limit}&page=${page}&title=&location=${location}&organization=${id}"),
+              "${baseUrl}/job/getall?limit=${limit}&page=${page}&title=${title}&location=${location}"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset-UTF-8',
             'Authorization': 'bearer ${token}'
           });
       if (response.statusCode == 200) {
         jobsByFilter = JobHome.fromJson(json.decode(response.body));
+
         stateJobsByFilter = ResultState.success;
+
         notifyListeners();
       } else {
         stateJobsByFilter = ResultState.failed;
@@ -144,8 +153,41 @@ class GetJobProvider with ChangeNotifier {
       stateJobsByFilter = ResultState.serverError;
       notifyListeners();
     }
+    print(Uri.parse(
+        "${baseUrl}/job/getall?limit=${limit}&page=${page}&title=&location=${location}"));
+    print(stateJobsByFilter);
+    return jobsByFilter;
+  }
 
-    return jobs;
+// GET ALL JOB BY FILTER (ORGANIZATION + INDIVIDUAL)
+  Future<JobHome> getJobsByFilterById({String? token, String? id = ""}) async {
+    stateJobsByFilterId = ResultState.loading;
+    notifyListeners();
+    try {
+      final response = await http.get(
+          Uri.parse("${baseUrl}/job/getall?organization=${id}"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset-UTF-8',
+            'Authorization': 'bearer ${token}'
+          });
+      if (response.statusCode == 200) {
+        jobsByFilter = JobHome.fromJson(json.decode(response.body));
+
+        stateJobsByFilterId = ResultState.success;
+
+        notifyListeners();
+      } else {
+        stateJobsByFilterId = ResultState.failed;
+        notifyListeners();
+      }
+    } catch (e) {
+      log(e.toString());
+      stateJobsByFilterId = ResultState.serverError;
+      notifyListeners();
+    }
+    print(Uri.parse("${baseUrl}/job/getall?organization=${id}"));
+    print(stateJobsByFilter);
+    return jobsByFilter;
   }
 
 // GET ALL REGISTERED JOB MILIK INDIVIDU YANG SEDANG LOGIN
@@ -205,7 +247,7 @@ class GetJobProvider with ChangeNotifier {
     return messages;
   }
 
-// UPDATE DATA JOB
+// UPDATE DAN INPUT DATA JOB (ORGANIZATION)
   Future<Messages> postPutJob(String? token, String? id, String title,
       String location, String expiredAt, String desc) async {
     stateUpdateJob = ResultState.loading;
@@ -244,7 +286,7 @@ class GetJobProvider with ChangeNotifier {
     return messages;
   }
 
-  // UPDATE DATA JOB
+  // UPDATE DATA JOB STATUS OPEN/CLOSE (ORGANIZATION)
   Future<Messages> putStatusJob(
       String? token, String? id, String status) async {
     stateUpdateStatusJob = ResultState.loading;
@@ -274,6 +316,74 @@ class GetJobProvider with ChangeNotifier {
     } catch (e) {
       log(e.toString());
       stateUpdateStatusJob = ResultState.serverError;
+      notifyListeners();
+    }
+
+    return messages;
+  }
+
+  // UPDATE DATA JOB STATUS OPEN/CLOSE (ORGANIZATION)
+  Future<Messages> putStatusRegistrant(
+      String? token, String? individuId, String? jobId, String status) async {
+    stateUpdateStatusRegistrantJob = ResultState.loading;
+    notifyListeners();
+    try {
+      var url = Uri.parse("${baseUrl}/organization/updateregistrant");
+
+      final response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'bearer ${token}'
+          },
+          body: jsonEncode(<String, dynamic>{
+            "individualId": individuId,
+            "jobId": jobId,
+            "registrantStatus": status
+          }));
+      if (response.statusCode == 200) {
+        messages = Messages.fromJson(json.decode(response.body));
+        stateUpdateStatusRegistrantJob = ResultState.success;
+        notifyListeners();
+      } else {
+        messages = Messages.fromJson(json.decode(response.body));
+        stateUpdateStatusRegistrantJob = ResultState.failed;
+        notifyListeners();
+      }
+    } catch (e) {
+      log(e.toString());
+      stateUpdateStatusRegistrantJob = ResultState.serverError;
+      notifyListeners();
+    }
+
+    return messages;
+  }
+
+  Future<Messages> deleteJob(String? token, String? id) async {
+    stateDeleteJob = ResultState.loading;
+    notifyListeners();
+    try {
+      var url = Uri.parse("${baseUrl}/job/delete/${id}");
+
+      final response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'bearer ${token}'
+          },
+          body: jsonEncode(<String, dynamic>{
+            "jobId": id,
+          }));
+      if (response.statusCode == 200) {
+        messages = Messages.fromJson(json.decode(response.body));
+        stateDeleteJob = ResultState.success;
+        notifyListeners();
+      } else {
+        messages = Messages.fromJson(json.decode(response.body));
+        stateDeleteJob = ResultState.failed;
+        notifyListeners();
+      }
+    } catch (e) {
+      log(e.toString());
+      stateDeleteJob = ResultState.serverError;
       notifyListeners();
     }
 

@@ -6,6 +6,7 @@ import 'package:foundlunteer/domain/registeredJobs.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/color.dart';
+import '../../constant/errorPage.dart';
 import '../../constant/widget_lib.dart';
 import '../../domain/resultState.dart';
 import '../home/home_detail.dart';
@@ -29,6 +30,12 @@ class _ApplyListState extends State<ApplyList> {
     });
   }
 
+  Future<void> _pullRefresh() async {
+    Provider.of<GetJobProvider>(context, listen: false)
+        .getRegisteredJobs(widget.token);
+    // why use freshNumbers var? https://stackoverflow.com/a/52992836/2301224
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<GetJobProvider>(
@@ -36,54 +43,56 @@ class _ApplyListState extends State<ApplyList> {
         if (registJob.stateRegisteredJobs == ResultState.loading) {
           return Center(child: CircularProgressIndicator());
         } else if (registJob.stateRegisteredJobs == ResultState.failed) {
-          return Center(child: Text('Gagal mengambil data'));
+          return ErrorPage(status: 1);
         } else if (registJob.stateRegisteredJobs == ResultState.serverError) {
-          return Center(child: Text('Server sedang bermasalah'));
+          return ErrorPage(status: 1);
         } else {
-          print(registJob.registeredJobs.registered?.length);
-          if (registJob.registeredJobs.registered?.length == 0) {
-            return Center(
-                child: Text('Anda belum melakukan pendaftaran apapun!'));
-          } else {
-            return Scaffold(
-              appBar: AppBar(
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(gradient: buttonGradient),
-                ),
-                title: Text(
-                  'Apply',
-                  style: title.copyWith(
-                      fontSize: 16.sp, fontWeight: FontWeight.w700),
-                ),
+          return Scaffold(
+            appBar: AppBar(
+              flexibleSpace: Container(
+                decoration: BoxDecoration(gradient: buttonGradient),
               ),
-              body: ListView.builder(
-                padding: EdgeInsets.all(0.0),
-                shrinkWrap: true,
-                itemCount: registJob.registeredJobs.registered?.length ?? 0,
-                itemBuilder: (BuildContext context, int i) {
-                  var temp = registJob.registeredJobs.registered?[i];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => HomeDetail(
-                                    index: i,
-                                    job: temp.job!,
-                                    registeredStatus:
-                                        temp.registrationStatus.toString(),
-                                  )));
-                    },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.h),
-                      child: listData(temp!),
+              title: Text(
+                'Apply',
+                style: title.copyWith(
+                    fontSize: 16.sp, fontWeight: FontWeight.w700),
+              ),
+            ),
+            body: (registJob.registeredJobs.registered?.isEmpty ?? true)
+                ? ErrorPage(status: 0)
+                : RefreshIndicator(
+                    onRefresh: _pullRefresh,
+                    child: ListView.builder(
+                      padding: EdgeInsets.all(0.0),
+                      shrinkWrap: true,
+                      itemCount:
+                          registJob.registeredJobs.registered?.length ?? 0,
+                      itemBuilder: (BuildContext context, int i) {
+                        var temp = registJob.registeredJobs.registered?[i];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        HomeDetail(
+                                          index: i,
+                                          job: temp.job!,
+                                          registeredStatus: temp
+                                              .registrationStatus
+                                              .toString(),
+                                        )));
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8.h, horizontal: 8.h),
+                            child: listData(temp!),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            );
-          }
+                  ),
+          );
         }
       },
     );

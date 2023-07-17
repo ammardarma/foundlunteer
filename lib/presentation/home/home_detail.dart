@@ -279,6 +279,9 @@ class _HomeDetailState extends State<HomeDetail> {
                                                           .organizationJob
                                                           ?.registrant ??
                                                       [],
+                                                  jobId: widget.organizationJob
+                                                          ?.id ??
+                                                      "",
                                                 )));
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -385,41 +388,156 @@ class _HomeDetailState extends State<HomeDetail> {
                           : Container()
                       : Container(),
                   (widget.organizationJob?.registrant?.length != null)
-                      ? Container(
-                          width: 358.w,
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [yellow, yellowDope],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight),
-                            borderRadius: BorderRadius.circular(5.r),
-                            boxShadow: shadowButton,
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          AddUpdateJob(
-                                            organizationJob:
-                                                widget.organizationJob,
-                                            status:
-                                                (widget.job.jobStatus == 'OPEN')
-                                                    ? 0
-                                                    : 1,
-                                          )));
-                            },
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.transparent,
-                                onSurface: Colors.transparent,
-                                shadowColor: Colors.transparent),
-                            child: Text(
-                              'Edit Pekerjaan',
-                              style: textButton,
-                            ),
-                          ))
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                              Container(
+                                  width: 150.w,
+                                  height: 34.h,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [yellow, yellowDope],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight),
+                                    borderRadius: BorderRadius.circular(5.r),
+                                    boxShadow: shadowButton,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  AddUpdateJob(
+                                                    organizationJob:
+                                                        widget.organizationJob,
+                                                    status:
+                                                        (widget.job.jobStatus ==
+                                                                'OPEN')
+                                                            ? 0
+                                                            : 1,
+                                                  )));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.transparent,
+                                        onSurface: Colors.transparent,
+                                        shadowColor: Colors.transparent),
+                                    child: Text(
+                                      'Edit Pekerjaan',
+                                      style: titleMedium,
+                                    ),
+                                  )),
+                              Container(
+                                  width: 150.w,
+                                  height: 34.h,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(5.r),
+                                    boxShadow: shadowButton,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      dialogBuilder(
+                                          context: context,
+                                          textContent:
+                                              "Anda yakin ingin menghapus pekerjaan ini?",
+                                          iconContent: Icon(
+                                            Icons.warning,
+                                            size: 30,
+                                            color: red,
+                                          ),
+                                          confirmButton: Align(
+                                            alignment: Alignment.center,
+                                            child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor: red),
+                                                onPressed: () async {
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    _loading = true;
+                                                  });
+                                                  SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  await jobs
+                                                      .deleteJob(
+                                                          prefs.getString(
+                                                              'token'),
+                                                          widget.organizationJob
+                                                              ?.id)
+                                                      .then((value) async {
+                                                    setState(() {
+                                                      _loading = false;
+                                                    });
+                                                    if (value.message ==
+                                                        'success') {
+                                                      dialogBuilder(
+                                                          context: context,
+                                                          textContent:
+                                                              value.message!,
+                                                          iconContent: Icon(
+                                                            Icons.done,
+                                                            size: 30,
+                                                            color: green,
+                                                          ),
+                                                          confirmButton: Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child:
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            green),
+                                                                    onPressed:
+                                                                        () async {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                      setState(
+                                                                          () {
+                                                                        _loading =
+                                                                            true;
+                                                                      });
+                                                                      await jobs
+                                                                          .getJobsOrganization(prefs.getString(
+                                                                              'token')!)
+                                                                          .then(
+                                                                              (value) {
+                                                                        setState(
+                                                                            () {
+                                                                          _loading =
+                                                                              false;
+                                                                        });
+                                                                        while (Navigator.canPop(
+                                                                            context)) {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        }
+                                                                      });
+                                                                    },
+                                                                    child: Text(
+                                                                        'OK')),
+                                                          ));
+                                                    } else {
+                                                      afterInputAlert(
+                                                          context,
+                                                          jobs.stateDeleteJob,
+                                                          value);
+                                                    }
+                                                  });
+                                                },
+                                                child: Text('OK')),
+                                          ));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.transparent,
+                                        onSurface: Colors.transparent,
+                                        shadowColor: Colors.transparent),
+                                    child: Text(
+                                      'Hapus Pekerjaan',
+                                      style: titleMedium.copyWith(color: white),
+                                    ),
+                                  ))
+                            ])
                       : Container(),
                   SizedBox(
                     height: 20.h,

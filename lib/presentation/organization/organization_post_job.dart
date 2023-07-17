@@ -113,23 +113,22 @@ class _AddUpdateJobState extends State<AddUpdateJob> {
                                 statusJob = "CLOSE";
                               }
                             });
+                            dialogBuilder(
+                                context: context,
+                                textContent:
+                                    "Status pekerjaan diubah menjadi ${statusJob}",
+                                iconContent: Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: red,
+                                  size: 30,
+                                ));
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
-                            messages = await jobs.putStatusJob(
-                                prefs.getString('token'),
-                                widget.organizationJob!.id,
-                                statusJob);
-                            dialogBuilder(
-                                    context: context,
-                                    textContent:
-                                        "Status pekerjaan diubah menjadi ${statusJob}",
-                                    iconContent: Icon(
-                                      Icons.warning_amber_rounded,
-                                      color: red,
-                                      size: 30,
-                                    ))
-                                .then((value) => afterInputAlert(context,
-                                    jobs.stateUpdateStatusJob, messages));
+                            await jobs
+                                .putStatusJob(prefs.getString('token'),
+                                    widget.organizationJob!.id, statusJob)
+                                .then((value) => afterInputAlert(
+                                    context, jobs.stateUpdateStatusJob, value));
                             await jobs
                                 .getJobsOrganization(prefs.getString('token'));
                             setState(() {
@@ -296,21 +295,56 @@ class _AddUpdateJobState extends State<AddUpdateJob> {
                             });
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
-                            messages = await jobs.postPutJob(
-                                prefs.getString('token'),
-                                widget.organizationJob?.id ?? "",
-                                _title.text,
-                                _location.text,
-                                _expiredAt.text,
-                                _desc.text);
-
-                            afterInputAlert(
-                                context, jobs.stateUpdateJob, messages);
-                            print(jobs.stateUpdateJob);
                             await jobs
-                                .getJobsOrganization(prefs.getString('token')!);
-                            setState(() {
-                              _loading = false;
+                                .postPutJob(
+                                    prefs.getString('token'),
+                                    widget.organizationJob?.id ?? "",
+                                    _title.text,
+                                    _location.text,
+                                    _expiredAt.text,
+                                    _desc.text)
+                                .then((value) async {
+                              if (value.message == 'success') {
+                                setState(() {
+                                  _loading = false;
+                                });
+                                dialogBuilder(
+                                    context: context,
+                                    textContent: value.message!,
+                                    iconContent: Icon(
+                                      Icons.done,
+                                      size: 30,
+                                      color: green,
+                                    ),
+                                    confirmButton: Align(
+                                      alignment: Alignment.center,
+                                      child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: green),
+                                          onPressed: () async {
+                                            Navigator.pop(context);
+                                            setState(() {
+                                              _loading = true;
+                                            });
+                                            await jobs
+                                                .getJobsOrganization(
+                                                    prefs.getString('token')!)
+                                                .then((value) {
+                                              setState(() {
+                                                _loading = false;
+                                              });
+                                              while (
+                                                  Navigator.canPop(context)) {
+                                                Navigator.pop(context);
+                                              }
+                                            });
+                                          },
+                                          child: Text('OK')),
+                                    ));
+                              } else {
+                                afterInputAlert(
+                                    context, jobs.stateUpdateJob, value);
+                              }
                             });
                           }
                         },

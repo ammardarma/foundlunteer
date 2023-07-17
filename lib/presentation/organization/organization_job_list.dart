@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:foundlunteer/constant/errorPage.dart';
 import 'package:foundlunteer/data/jobsImpl.dart';
 import 'package:foundlunteer/domain/messages.dart';
 import 'package:foundlunteer/domain/organizationJob.dart';
@@ -45,11 +46,10 @@ class _OrganizationListState extends State<OrganizationList> {
         if (jobs.stateJobsByOrganization == ResultState.loading) {
           return Center(child: CircularProgressIndicator());
         } else if (jobs.stateJobsByOrganization == ResultState.failed) {
-          return Center(child: Text('Gagal mengambil data'));
+          return ErrorPage(status: 1);
         } else if (jobs.stateJobsByOrganization == ResultState.serverError) {
-          return Center(child: Text('Server sedang bermasalah'));
+          return ErrorPage(status: 1);
         } else {
-          print(jobs.jobsByOrganization.jobs?.length);
           return Scaffold(
             floatingActionButton: FloatingActionButton(
               onPressed: () {
@@ -75,59 +75,63 @@ class _OrganizationListState extends State<OrganizationList> {
                     fontSize: 16.sp, fontWeight: FontWeight.w700),
               ),
             ),
-            body: LoadingOverlay(
-              isLoading: _loading,
-              child: ListView.builder(
-                padding: EdgeInsets.all(0.0),
-                shrinkWrap: true,
-                itemCount: jobs.jobsByOrganization.jobs?.length ?? 0,
-                itemBuilder: (BuildContext context, int i) {
-                  var job = jobs.jobsByOrganization.jobs?[i];
-                  return GestureDetector(
-                    onTap: () async {
-                      print(job.id);
-                      setState(() {
-                        _loading = true;
-                      });
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      await jobs.getJobOrganizationById(
-                          prefs.getString('token'), job.id!);
+            body: (jobs.jobsByOrganization.jobs?.isEmpty ?? true)
+                ? ErrorPage(status: 0)
+                : LoadingOverlay(
+                    isLoading: _loading,
+                    child: ListView.builder(
+                      padding: EdgeInsets.all(0.0),
+                      shrinkWrap: true,
+                      itemCount: jobs.jobsByOrganization.jobs?.length ?? 0,
+                      itemBuilder: (BuildContext context, int i) {
+                        var job = jobs.jobsByOrganization.jobs?[i];
+                        return GestureDetector(
+                          onTap: () async {
+                            print(job.id);
+                            setState(() {
+                              _loading = true;
+                            });
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await jobs.getJobOrganizationById(
+                                prefs.getString('token'), job.id!);
 
-                      if (jobs.stateJobsById == ResultState.failed) {
-                        Messages failMessage = Messages(
-                            message:
-                                "Gagal mengambil data, silahkan coba lagi!");
-                        afterInputAlert(
-                            context, jobs.stateJobsById, failMessage);
-                      } else if (jobs.stateJobsById ==
-                          ResultState.serverError) {
-                        Messages failServerMessage = Messages(
-                            message:
-                                "Server sedang bermasalah, silahkan coba lagi!");
-                        afterInputAlert(
-                            context, jobs.stateJobsById, failServerMessage);
-                      } else if (jobs.stateJobsById == ResultState.success) {
-                        setState(() {
-                          _loading = false;
-                        });
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) => HomeDetail(
-                                  index: i,
-                                  job: job,
-                                  organizationJob: jobs.organizationJobById,
-                                )));
-                      }
-                    },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.h),
-                      child: listData(job!),
+                            if (jobs.stateJobsById == ResultState.failed) {
+                              Messages failMessage = Messages(
+                                  message:
+                                      "Gagal mengambil data, silahkan coba lagi!");
+                              afterInputAlert(
+                                  context, jobs.stateJobsById, failMessage);
+                            } else if (jobs.stateJobsById ==
+                                ResultState.serverError) {
+                              Messages failServerMessage = Messages(
+                                  message:
+                                      "Server sedang bermasalah, silahkan coba lagi!");
+                              afterInputAlert(context, jobs.stateJobsById,
+                                  failServerMessage);
+                            } else if (jobs.stateJobsById ==
+                                ResultState.success) {
+                              setState(() {
+                                _loading = false;
+                              });
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) => HomeDetail(
+                                        index: i,
+                                        job: job,
+                                        organizationJob:
+                                            jobs.organizationJobById,
+                                      )));
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8.h, horizontal: 8.h),
+                            child: listData(job!),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
           );
         }
       },

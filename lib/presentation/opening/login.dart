@@ -219,8 +219,8 @@ class _LoginState extends State<Login> {
                                   ResultState.success) {
                                 await dataUserProvider.getMyUsers(
                                     dataProvider.loginAccount.token);
-                                await dataJobsProvider
-                                    .getJobs(dataProvider.loginAccount.token);
+                                await dataJobsProvider.getJobs(
+                                    dataProvider.loginAccount.token, 1);
                                 if (dataJobsProvider.stateJobs !=
                                     ResultState.success) {
                                   dialogBuilder(

@@ -57,14 +57,16 @@ class OrganizationJob {
 class Registrant {
   String? registrationStatus;
   Individual? individual;
+  String? image;
 
-  Registrant({this.registrationStatus, this.individual});
+  Registrant({this.registrationStatus, this.individual, this.image});
 
   Registrant.fromJson(Map<String, dynamic> json) {
     registrationStatus = json['registrationStatus'];
     individual = json['individual'] != null
         ? new Individual.fromJson(json['individual'])
         : null;
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,6 +75,7 @@ class Registrant {
     if (this.individual != null) {
       data['individual'] = this.individual!.toJson();
     }
+    data['image'] = this.image;
     return data;
   }
 }

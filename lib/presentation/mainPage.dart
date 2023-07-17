@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foundlunteer/data/usersImpl.dart';
 import 'package:foundlunteer/presentation/apply/apply_list.dart';
 import 'package:foundlunteer/presentation/home/home_list.dart';
@@ -13,6 +14,7 @@ import '../constant/widget_lib.dart';
 import '../data/jobsImpl.dart';
 import '../domain/users.dart';
 import 'organization/organization_job_list.dart';
+import 'package:flutter/painting.dart' as painting;
 
 class MainPage extends StatefulWidget {
   final String? token;
@@ -39,7 +41,9 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetUserProvider>(context, listen: false)
           .getMyUsers(widget.token);
-      Provider.of<GetJobProvider>(context, listen: false).getJobs(widget.token);
+      Provider.of<GetJobProvider>(context, listen: false)
+          .getJobs(widget.token, 1);
+      painting.imageCache.clear();
     });
   }
 
@@ -61,20 +65,31 @@ class _MainPageState extends State<MainPage> {
                 showUnselectedLabels: true,
                 items: [
                   BottomNavigationBarItem(
-                      activeIcon: ImageIcon(
-                          AssetImage('assets/icons/home_inactive.png')),
-                      icon: ImageIcon(
-                          AssetImage('assets/icons/home_inactive.png')),
+                      activeIcon: Icon(
+                        FontAwesomeIcons.house,
+                        size: 25,
+                      ),
+                      icon: Icon(
+                        FontAwesomeIcons.houseUser,
+                        size: 25,
+                      ),
                       label: "Dashboard"),
                   BottomNavigationBarItem(
-                      activeIcon:
-                          ImageIcon(AssetImage('assets/icons/send.png')),
-                      icon: ImageIcon(AssetImage('assets/icons/send.png')),
+                      activeIcon: Icon(
+                        Icons.work,
+                        size: 28,
+                      ),
+                      icon: Icon(
+                        Icons.work_outline_outlined,
+                        size: 28,
+                      ),
                       label: "Apply Job"),
                   BottomNavigationBarItem(
-                      activeIcon:
-                          ImageIcon(AssetImage('assets/icons/profile.png')),
-                      icon: ImageIcon(AssetImage('assets/icons/profile.png')),
+                      activeIcon: Icon(
+                        FontAwesomeIcons.userAlt,
+                        size: 25,
+                      ),
+                      icon: Icon(FontAwesomeIcons.user),
                       label: "My Profile"),
                 ]),
             body: LazyLoadIndexedStack(index: _selectedIndex, children: [

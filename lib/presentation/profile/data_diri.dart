@@ -1,3 +1,11 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,6 +13,7 @@ import 'package:foundlunteer/data/usersImpl.dart';
 import 'package:foundlunteer/domain/messages.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,8 +22,11 @@ import '../../constant/widget_lib.dart';
 import '../../domain/resultState.dart';
 import '../opening/login.dart';
 
+import 'package:flutter/painting.dart' as painting;
+
 class DataDiri extends StatefulWidget {
-  const DataDiri({super.key});
+  const DataDiri({super.key, required this.token});
+  final String token;
 
   @override
   State<DataDiri> createState() => _DataDiriState();
@@ -34,6 +46,11 @@ class _DataDiriState extends State<DataDiri> {
   GetUserProvider? data;
   Messages messages = Messages();
 
+  CroppedFile? croppedFile;
+  XFile? result;
+  File? image;
+  File? file;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -48,8 +65,10 @@ class _DataDiriState extends State<DataDiri> {
     _desc.text = data?.users.description ?? "";
 
     if (data?.users.user?.role == "INDIVIDUAL") {
-      var date = DateTime.parse(data!.users.birthOfDate.toString());
-      _age.text = DateFormat.yMMMMd().format(date);
+      if (data!.users.birthOfDate != null) {
+        var date = DateTime.parse(data!.users.birthOfDate.toString());
+        _age.text = DateFormat.yMMMMd().format(date);
+      }
     } else {
       _age.text = data?.users.leader ?? "";
     }
@@ -88,20 +107,132 @@ class _DataDiriState extends State<DataDiri> {
               key: _formKey,
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 80.r,
-                    backgroundImage: AssetImage('assets/foto_pribadi.jpeg'),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: CircleAvatar(
-                        radius: 24,
-                        backgroundColor: yellow,
-                        child: Icon(
-                          Icons.camera_alt,
-                          size: 24.0,
-                          color: black,
-                        ),
-                      ),
+                  GestureDetector(
+                    onTap: () async {
+                      painting.imageCache.clear();
+                      final ImagePicker picker = ImagePicker();
+                      result = await picker
+                          .pickImage(source: ImageSource.gallery)
+                          .catchError((onError) {
+                        dialogBuilder(
+                            context: context,
+                            textContent:
+                                "Gagal mengambil gambar ini! (Corrupt)",
+                            iconContent: Icon(
+                              Icons.warning_amber_rounded,
+                              color: red,
+                              size: 30,
+                            ));
+                      });
+                      var bytes = await result?.readAsBytes();
+                      if (result != null) {
+                        if (bytes!.length > 4100000) {
+                          dialogBuilder(
+                              context: context,
+                              textContent:
+                                  "Size foto terlalu besar (Maks 4MB) ",
+                              iconContent: Icon(
+                                Icons.warning_amber_rounded,
+                                color: red,
+                                size: 30,
+                              ));
+                        } else {
+                          await _cropImage();
+                          if (croppedFile != null) {
+                            //check platform
+                            if (Platform.isIOS) {
+                              setState(() {
+                                file = File(croppedFile?.path ?? "file.png");
+                              });
+                              final documentPath =
+                                  (await getLibraryDirectory()).path;
+                              File tempImage = await file!.copy(
+                                  '$documentPath/${path.basename(file!.path)}');
+                              setState(() {
+                                image = tempImage;
+                              });
+                            } else {
+                              setState(() {
+                                image = File(croppedFile?.path ?? "file.png");
+                              });
+                            }
+                            //check if image already select
+                            if (image != null) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              messages = await data!.postProfileImage(
+                                  prefs.getString('token').toString(), image!);
+                              await afterInputAlert(
+                                  context, data!.stateProfileImage, messages);
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            }
+                          } else {
+                            scaffoldBatal(context);
+                          }
+                        }
+                      } else {
+                        scaffoldBatal(context);
+                      }
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "https://aws.senna-annaba.my.id/user/getimage?image" +
+                              Random().nextInt(10000).toString(),
+                      httpHeaders: headers(widget.token),
+                      placeholder: (context, url) {
+                        return CircleAvatar(
+                          radius: 80.r,
+                          backgroundColor: yellow,
+                          backgroundImage:
+                              AssetImage('assets/icons/data_diri.png'),
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return CircleAvatar(
+                          radius: 80.r,
+                          backgroundImage:
+                              AssetImage('assets/icons/data_diri.png'),
+                          backgroundColor: yellow,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: CircleAvatar(
+                              backgroundColor: yellow,
+                              radius: 24,
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 24.0,
+                                color: black,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      imageBuilder: (context, imageProvider) {
+                        return CircleAvatar(
+                          radius: 80.r,
+                          backgroundImage: imageProvider,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: CircleAvatar(
+                              backgroundColor: yellow,
+                              radius: 24,
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 24.0,
+                                color: black,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   SizedBox(
@@ -131,17 +262,16 @@ class _DataDiriState extends State<DataDiri> {
                       decoration: inputDecorationTextInput(
                           hintText: "yourgmail@add.com",
                           suffixIcon: Icon(
-                            FontAwesomeIcons.envelope,
+                            Icons.mail_sharp,
                             size: 25,
                           )),
                     ),
                   ),
                   SizedBox(
-                    height: 14.h,
+                    height: 10.h,
                   ),
                   Container(
                     width: 348.w,
-                    height: 45.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       color: white,
@@ -162,11 +292,14 @@ class _DataDiriState extends State<DataDiri> {
                       keyboardType: TextInputType.text,
                       decoration: inputDecorationTextInput(
                           hintText: "Your Name",
-                          suffixIcon: Icon(Icons.diversity_3_sharp)),
+                          suffixIcon: Icon(
+                            Icons.person,
+                            size: 25,
+                          )),
                     ),
                   ),
                   SizedBox(
-                    height: 14.h,
+                    height: 10.h,
                   ),
                   Container(
                     width: 348.w,
@@ -198,11 +331,10 @@ class _DataDiriState extends State<DataDiri> {
                     ),
                   ),
                   SizedBox(
-                    height: 14.h,
+                    height: 10.h,
                   ),
                   Container(
                     width: 348.w,
-                    height: 45.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       color: white,
@@ -225,16 +357,15 @@ class _DataDiriState extends State<DataDiri> {
                           hintText: "Your Phone",
                           suffixIcon: Icon(
                             FontAwesomeIcons.whatsapp,
-                            size: 27,
+                            size: 25,
                           )),
                     ),
                   ),
                   SizedBox(
-                    height: 14.h,
+                    height: 10.h,
                   ),
                   Container(
                     width: 348.w,
-                    height: 45.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       color: white,
@@ -243,7 +374,7 @@ class _DataDiriState extends State<DataDiri> {
                     child: TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'tanggal lahir tidak boleh kosong';
+                          return 'tidak boleh kosong';
                         }
                       },
                       controller: _age,
@@ -264,7 +395,6 @@ class _DataDiriState extends State<DataDiri> {
                               lastDate: DateTime(2101));
 
                           if (pickedDate != null) {
-                            print(pickedDate);
                             String formattedDate =
                                 DateFormat.yMMMMd().format(pickedDate);
                             print(formattedDate);
@@ -276,7 +406,6 @@ class _DataDiriState extends State<DataDiri> {
                           }
                         }
                       },
-                      keyboardType: TextInputType.number,
                       decoration: inputDecorationTextInput(
                           hintText: (data?.users.user?.role == "INDIVIDUAL")
                               ? "May 16, 2001"
@@ -284,17 +413,16 @@ class _DataDiriState extends State<DataDiri> {
                           suffixIcon: Icon(
                             (data?.users.user?.role == "INDIVIDUAL")
                                 ? FontAwesomeIcons.birthdayCake
-                                : Icons.face_retouching_natural_sharp,
-                            size: 22,
+                                : FontAwesomeIcons.crown,
+                            size: 20,
                           )),
                     ),
                   ),
                   SizedBox(
-                    height: 14.h,
+                    height: 10.h,
                   ),
                   Container(
                     width: 348.w,
-                    height: 45.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       color: white,
@@ -311,12 +439,12 @@ class _DataDiriState extends State<DataDiri> {
                           hintText: "Your Instagram",
                           suffixIcon: Icon(
                             FontAwesomeIcons.instagram,
-                            size: 27,
+                            size: 25,
                           )),
                     ),
                   ),
                   SizedBox(
-                    height: 14.h,
+                    height: 10.h,
                   ),
                   Container(
                     width: 348.w,
@@ -380,7 +508,6 @@ class _DataDiriState extends State<DataDiri> {
                                   _desc.text,
                                   _social.text);
                             }
-                            print(data?.state);
                             print(messages.message);
                             await afterInputAlert(
                                 context, data!.statePutUsers, messages);
@@ -409,6 +536,33 @@ class _DataDiriState extends State<DataDiri> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<Null> _cropImage() async {
+    croppedFile = await ImageCropper().cropImage(
+      sourcePath: result!.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+        WebUiSettings(
+          context: context,
+        ),
+      ],
     );
   }
 }

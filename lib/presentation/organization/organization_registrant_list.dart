@@ -4,15 +4,19 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foundlunteer/domain/organizationJob.dart';
+import 'package:foundlunteer/presentation/organization/organization_registrant_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 import '../../constant/color.dart';
+import '../../constant/errorPage.dart';
 import '../../constant/widget_lib.dart';
 
 class RegistrantList extends StatefulWidget {
-  const RegistrantList({super.key, required this.registrant});
+  const RegistrantList(
+      {super.key, required this.registrant, required this.jobId});
   final List<Registrant> registrant;
+  final String jobId;
 
   @override
   State<RegistrantList> createState() => _RegistrantListState();
@@ -42,23 +46,32 @@ class _RegistrantListState extends State<RegistrantList> {
             style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),
           ),
         ),
-        body: LoadingOverlay(
-            isLoading: _loading,
-            child: Container(
-                padding: EdgeInsets.all(14),
-                width: screenWidth(context),
-                height: screenHeight(context),
-                decoration: BoxDecoration(color: whiteBackground),
-                child: ListView.builder(
-                    itemCount: widget.registrant.length,
-                    itemBuilder: (context, index) {
-                      var users = widget.registrant[index];
-                      return GestureDetector(
-                          onTap: () {
-                            print('tap2 list');
-                          },
-                          child: listData(users));
-                    }))));
+        body: (widget.registrant.isEmpty)
+            ? ErrorPage(status: 0)
+            : LoadingOverlay(
+                isLoading: _loading,
+                child: Container(
+                    padding: EdgeInsets.all(14),
+                    width: screenWidth(context),
+                    height: screenHeight(context),
+                    decoration: BoxDecoration(color: whiteBackground),
+                    child: ListView.builder(
+                        itemCount: widget.registrant.length,
+                        itemBuilder: (context, index) {
+                          var users = widget.registrant[index];
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            RegistrantDetail(
+                                              registrant: users,
+                                              jobId: widget.jobId,
+                                            )));
+                              },
+                              child: listData(users));
+                        }))));
   }
 
   Widget listData(Registrant users) {
@@ -72,7 +85,7 @@ class _RegistrantListState extends State<RegistrantList> {
         boxShadow: shadowButton,
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Column(
@@ -81,7 +94,9 @@ class _RegistrantListState extends State<RegistrantList> {
             children: [
               GestureDetector(
                 onTap: () {
-                  viewPhoto(context, "");
+                  if (users.image != null) {
+                    viewPhoto(context, NetworkImage(users.image!));
+                  }
                 },
                 child: Container(
                   width: 79.w,
@@ -89,7 +104,10 @@ class _RegistrantListState extends State<RegistrantList> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       image: DecorationImage(
-                          image: AssetImage('assets/foto_pribadi.jpeg'),
+                          image: (users.image != null)
+                              ? NetworkImage(users.image!)
+                              : AssetImage('assets/icons/data_diri.png')
+                                  as ImageProvider,
                           fit: BoxFit.cover)),
                 ),
               ),

@@ -13,6 +13,13 @@ double screenArea(BuildContext context) =>
 
 var baseUrl = "https://aws.senna-annaba.my.id";
 
+headers(String token) {
+  return <String, String>{
+    'Content-Type': 'application/json',
+    'Authorization': 'bearer ${token}'
+  };
+}
+
 //textStyle
 
 TextStyle normalText = TextStyle(
@@ -202,6 +209,7 @@ Future<void> dialogBuilder(
             Text(
               textContent,
               style: title,
+              textAlign: TextAlign.center,
             )
           ],
         ),
@@ -211,7 +219,7 @@ Future<void> dialogBuilder(
   );
 }
 
-Future<void> viewPhoto(BuildContext context, String url) {
+Future<void> viewPhoto(BuildContext context, ImageProvider imageProvider) {
   return showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -227,9 +235,8 @@ Future<void> viewPhoto(BuildContext context, String url) {
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.r),
-                image: DecorationImage(
-                    image: AssetImage('assets/foto_pribadi.jpeg'),
-                    fit: BoxFit.cover)),
+                image:
+                    DecorationImage(image: imageProvider, fit: BoxFit.cover)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [],
@@ -273,5 +280,61 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> scaffoldBatal(
     const SnackBar(
       content: Center(child: Text("Batal")),
     ),
+  );
+}
+
+Widget noData() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      Image.asset(
+        'assets/data_notfound.png',
+        scale: 2,
+      ),
+      SizedBox(height: 10.h),
+      Text(
+        'Ups, belum ada data!',
+        style: title,
+      ),
+    ],
+  );
+}
+
+Widget serverProblem() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      Image.asset(
+        'assets/server_problem.png',
+        scale: 2,
+      ),
+      SizedBox(height: 10.h),
+      Text(
+        'Maaf, server sedang bermasalah. Silahkan dicoba lagi nanti!',
+        style: title,
+        textAlign: TextAlign.center,
+      ),
+    ],
+  );
+}
+
+Widget noInternet() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      Image.asset(
+        'assets/lost_connection.png',
+        scale: 2,
+      ),
+      SizedBox(height: 10.h),
+      Text(
+        'Ups, Internet anda tidak bekerja dengan baik!',
+        style: title,
+        textAlign: TextAlign.center,
+      ),
+    ],
   );
 }
