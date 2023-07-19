@@ -37,6 +37,7 @@ class _OrganizationProfilState extends State<OrganizationProfil> {
               Navigator.pop(context);
             },
           ),
+          centerTitle: true,
           title: Text(
             'Profil Organisasi',
             style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

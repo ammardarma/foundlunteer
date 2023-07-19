@@ -69,6 +69,7 @@ class _OrganizationListState extends State<OrganizationList> {
               flexibleSpace: Container(
                 decoration: BoxDecoration(gradient: buttonGradient),
               ),
+              centerTitle: true,
               title: Text(
                 'Pekerjaan Saya',
                 style: title.copyWith(

@@ -68,6 +68,7 @@ class _AddUpdateJobState extends State<AddUpdateJob> {
               }
             },
           ),
+          centerTitle: true,
           title: Text(
             (widget.organizationJob == null)
                 ? 'Tambah Pekerjaan'

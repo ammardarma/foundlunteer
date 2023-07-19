@@ -52,6 +52,7 @@ class _ApplyListState extends State<ApplyList> {
               flexibleSpace: Container(
                 decoration: BoxDecoration(gradient: buttonGradient),
               ),
+              centerTitle: true,
               title: Text(
                 'Apply',
                 style: title.copyWith(

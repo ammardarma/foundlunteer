@@ -90,6 +90,7 @@ class _DataDiriState extends State<DataDiri> {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
         title: Text(
           'Data Diri',
           style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

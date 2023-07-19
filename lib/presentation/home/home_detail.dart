@@ -58,6 +58,7 @@ class _HomeDetailState extends State<HomeDetail> {
               Navigator.pop(context);
             },
           ),
+          centerTitle: true,
           title: Text(
             'Detail Pekerjaan',
             style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

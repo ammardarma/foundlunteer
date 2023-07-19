@@ -28,6 +28,7 @@ class _UbahPasswordState extends State<UbahPassword> {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
         title: Text(
           'Ubah Password',
           style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

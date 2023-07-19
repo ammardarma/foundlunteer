@@ -54,6 +54,7 @@ class _DataDokumenState extends State<DataDokumen> {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
         title: Text(
           'Data Dokumen',
           style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

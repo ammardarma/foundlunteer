@@ -33,6 +33,7 @@ class _HomeSearchState extends State<HomeSearch> {
         flexibleSpace: Container(
           decoration: BoxDecoration(gradient: buttonGradient),
         ),
+        centerTitle: true,
         title: Text(
           'Search Page',
           style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

@@ -116,6 +116,8 @@ class _HomeListState extends State<HomeList> {
                             users.users.user?.email ?? "",
                             style: title.copyWith(
                                 fontSize: 12.sp, fontWeight: FontWeight.w600),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

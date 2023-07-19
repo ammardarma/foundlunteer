@@ -74,6 +74,7 @@ class _RegistrantDetailState extends State<RegistrantDetail> {
               }
             },
           ),
+          centerTitle: true,
           title: Text(
             'Registrant Detail',
             style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),

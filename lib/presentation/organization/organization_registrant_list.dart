@@ -41,6 +41,7 @@ class _RegistrantListState extends State<RegistrantList> {
               Navigator.pop(context);
             },
           ),
+          centerTitle: true,
           title: Text(
             'Pendaftar',
             style: title.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700),
@@ -70,7 +71,12 @@ class _RegistrantListState extends State<RegistrantList> {
                                               jobId: widget.jobId,
                                             )));
                               },
-                              child: listData(users));
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 4.h,
+                                ),
+                                child: listData(users),
+                              ));
                         }))));
   }
 
