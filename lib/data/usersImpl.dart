@@ -21,6 +21,7 @@ class GetUserProvider with ChangeNotifier {
   Users users = Users();
   ResultState state = ResultState.empty;
   ResultState statePutUsers = ResultState.empty;
+  ResultState stateChangePassword = ResultState.empty;
 
   Files files = Files();
   Uint8List image = Uint8List(1000);
@@ -58,12 +59,12 @@ class GetUserProvider with ChangeNotifier {
 
   Future<Messages> putUsers(String token, String name, String address,
       String phone, String age, String desc, String social) async {
-    state = ResultState.loading;
+    statePutUsers = ResultState.loading;
     notifyListeners();
     try {
       final response =
           await http.post(Uri.parse("${baseUrl}/individual/update"),
-              headers: headers(token!),
+              headers: headers(token),
               body: jsonEncode(<String, dynamic>{
                 "name": name,
                 "address": address,
@@ -90,34 +91,26 @@ class GetUserProvider with ChangeNotifier {
     return messages;
   }
 
-  Future<Messages> changePassword(String token, String name, String address,
-      String phone, String age, String desc, String social) async {
-    state = ResultState.loading;
+  Future<Messages> changePassword(String token, String password) async {
+    stateChangePassword = ResultState.loading;
     notifyListeners();
     try {
-      final response =
-          await http.post(Uri.parse("${baseUrl}/individual/update"),
-              headers: headers(token!),
-              body: jsonEncode(<String, dynamic>{
-                "name": name,
-                "address": address,
-                "phone": phone,
-                "birthOfDate": age,
-                "description": desc,
-                "social": social
-              }));
+      final response = await http.post(
+          Uri.parse("${baseUrl}/user/changepassword"),
+          headers: headers(token),
+          body: jsonEncode(<String, dynamic>{"password": password}));
       if (response.statusCode == 200) {
         messages = Messages.fromJson(json.decode(response.body));
-        statePutUsers = ResultState.success;
+        stateChangePassword = ResultState.success;
         notifyListeners();
       } else {
         messages = Messages.fromJson(json.decode(response.body));
-        statePutUsers = ResultState.failed;
+        stateChangePassword = ResultState.failed;
         notifyListeners();
       }
     } catch (e) {
       log(e.toString());
-      statePutUsers = ResultState.serverError;
+      stateChangePassword = ResultState.serverError;
       notifyListeners();
     }
 
@@ -137,7 +130,7 @@ class GetUserProvider with ChangeNotifier {
     try {
       final response =
           await http.post(Uri.parse("${baseUrl}/organization/update"),
-              headers: headers(token!),
+              headers: headers(token),
               body: jsonEncode(<String, dynamic>{
                 "name": name,
                 "address": address,

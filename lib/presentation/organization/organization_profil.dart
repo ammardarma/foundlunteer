@@ -297,7 +297,7 @@ class _OrganizationProfilState extends State<OrganizationProfil> {
               ),
               SizedBox(
                 child: Text(
-                  "Pekerjaan Terdaftar : ",
+                  "Tawaran Pekerjaan : ",
                   style: title,
                   textAlign: TextAlign.start,
                 ),
