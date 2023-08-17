@@ -167,30 +167,33 @@ class _RegistrantListState extends State<RegistrantList> {
                 SizedBox(
                   height: 6.h,
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 5.w, right: 10.w),
-                  height: 24.h,
-                  decoration: BoxDecoration(
-                      color: salmon10,
-                      borderRadius: BorderRadius.circular(5.r)),
-                  child: Center(
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                        Icon(
-                          FontAwesomeIcons.envelope,
-                          color: salmon,
-                          size: 12,
-                        ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Text(
-                          users.individual?.user?.email ?? "",
-                          style: textLink.copyWith(
-                              color: salmon, fontWeight: FontWeight.w700),
-                        ),
-                      ])),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 5.w, right: 10.w),
+                    height: 24.h,
+                    decoration: BoxDecoration(
+                        color: salmon10,
+                        borderRadius: BorderRadius.circular(5.r)),
+                    child: Center(
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                          Icon(
+                            FontAwesomeIcons.envelope,
+                            color: salmon,
+                            size: 12,
+                          ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Text(
+                            users.individual?.user?.email ?? "",
+                            style: textLink.copyWith(
+                                color: salmon, fontWeight: FontWeight.w700),
+                          ),
+                        ])),
+                  ),
                 ),
                 SizedBox(
                   height: 6.h,

@@ -368,10 +368,19 @@ class _HomeDetailState extends State<HomeDetail> {
                                   });
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
-                                  messages = await jobs.registJob(
-                                      prefs.getString('token'), widget.job.id!);
-                                  afterInputAlert(
-                                      context, jobs.stateRegisterJob, messages);
+                                  await jobs
+                                      .registJob(prefs.getString('token'),
+                                          widget.job.id!)
+                                      .then((value) {
+                                    afterInputAlert(
+                                        context, jobs.stateRegisterJob, value);
+                                    if (value.message == 'success') {
+                                      Provider.of<GetJobProvider>(context,
+                                              listen: false)
+                                          .getRegisteredJobs(
+                                              prefs.getString('token'));
+                                    }
+                                  });
 
                                   setState(() {
                                     _loading = false;

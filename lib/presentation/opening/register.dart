@@ -155,7 +155,9 @@ class _RegisterState extends State<Register> {
                         },
                         controller: _nama,
                         decoration: InputDecoration.collapsed(
-                          hintText: "Masukkan nama lengkap/organisasi",
+                          hintText: (widget.role == "individual")
+                              ? "Masukkan nama lengkap"
+                              : "Masukkan nama organisasi",
                           hintStyle: TextStyle(
                             color: blackHintText,
                           ),

@@ -597,6 +597,7 @@ class _RegistrantDetailState extends State<RegistrantDetail> {
                                             _index = index!;
                                             goBack = true;
                                           });
+                                          Navigator.pop(context);
                                           SharedPreferences prefs =
                                               await SharedPreferences
                                                   .getInstance();
@@ -646,6 +647,16 @@ class _RegistrantDetailState extends State<RegistrantDetail> {
                             ],
                             onToggle: (index) async {}),
                       ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Text(
+                  (_index == 0)
+                      ? 'Silahkan hubungi pendaftar melalui email atau nomor telepon setelah proses penerimaan!'
+                      : "",
+                  style: titleMini.copyWith(color: red),
+                  textAlign: TextAlign.center,
+                ),
                 SizedBox(
                   height: 50.h,
                 ),
